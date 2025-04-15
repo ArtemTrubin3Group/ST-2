@@ -79,3 +79,86 @@ TEST(TaskTest, NegativeInputs) {
     double cost = poolCost(-3.0, -1.0, -100.0, -50.0);
     EXPECT_NEAR(cost, 0.0, EPSILON);
 }
+
+TEST(CircleTest, ZeroRadiusOperations) {
+    Circle c(0.0);
+    EXPECT_NEAR(c.getRadius(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getArea(), 0.0, EPSILON);
+}
+
+TEST(CircleTest, LargeRadiusOperations) {
+    Circle c(1e6);
+    EXPECT_NEAR(c.getRadius(), 1e6, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 2*M_PI*1e6, EPSILON);
+    EXPECT_NEAR(c.getArea(), M_PI*1e12, EPSILON);
+}
+
+TEST(CircleTest, PrecisionOperations) {
+    Circle c(0.000001);
+    EXPECT_NEAR(c.getRadius(), 0.000001, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 2*M_PI*0.000001, EPSILON);
+    EXPECT_NEAR(c.getArea(), M_PI*1e-12, EPSILON);
+}
+
+TEST(CircleTest, MultipleUpdates) {
+    Circle c(1.0);
+    c.setFerence(6.283185);
+    c.setArea(12.566371);
+    EXPECT_NEAR(c.getRadius(), 2.0, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 12.566371, EPSILON);
+    EXPECT_NEAR(c.getArea(), 12.566371, EPSILON);
+}
+
+TEST(CircleTest, ChainedUpdates) {
+    Circle c(0.0);
+    c.setArea(78.539816);
+    c.setFerence(31.415927);
+    EXPECT_NEAR(c.getRadius(), 5.0, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 31.415927, EPSILON);
+    EXPECT_NEAR(c.getArea(), 78.539816, EPSILON*10);
+}
+
+TEST(CircleTest, NegativeRadiusInitialization) {
+    Circle c(-5.0);
+    EXPECT_NEAR(c.getRadius(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getFerence(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getArea(), 0.0, EPSILON);
+}
+
+TEST(CircleTest, PartialNegativeUpdates) {
+    Circle c(10.0);
+    c.setFerence(-10.0);
+    EXPECT_NEAR(c.getFerence(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getRadius(), 0.0, EPSILON);
+    c.setRadius(10.0);
+    c.setArea(-25.0);
+    EXPECT_NEAR(c.getArea(), 0.0, EPSILON);
+    EXPECT_NEAR(c.getRadius(), 0.0, EPSILON);
+}
+
+TEST(TaskTest, ZeroRopeGap) {
+    double gap = ropeGap(0.0);
+    EXPECT_NEAR(gap, 1.0/(2*M_PI), EPSILON);
+}
+
+TEST(TaskTest, TinyRopeGap) {
+    double gap = ropeGap(1e-6);
+    EXPECT_NEAR(gap, 1.0/(2*M_PI), EPSILON);
+}
+
+TEST(TaskTest, HugeRopeGap) {
+    double gap = ropeGap(1e12);
+    EXPECT_NEAR(gap, 1.0/(2*M_PI), EPSILON*1000);
+}
+
+TEST(TaskTest, PoolZeroWidth) {
+    double cost = poolCost(5.0, 0.0, 100.0, 50.0);
+    double expected = (2*M_PI*5.0*50.0);
+    EXPECT_NEAR(cost, expected, EPSILON);
+}
+
+TEST(TaskTest, PoolNegativeWidth) {
+    double cost = poolCost(5.0, -1.0, 100.0, 50.0);
+    EXPECT_NEAR(cost, 0.0, EPSILON);
+}
