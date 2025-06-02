@@ -6,12 +6,10 @@
 
 class Circle {
  public:
-  explicit Circle(double r);
-
-  void setRadius(double r);
-  void setFerence(double f);
-  void setArea(double a);
-
+  explicit Circle(double radius);
+  void setRadius(double radius);
+  void setFerence(double ference);
+  void setArea(double area);
   double getRadius() const;
   double getFerence() const;
   double getArea() const;
@@ -20,10 +18,6 @@ class Circle {
   double radius;
   double ference;
   double area;
-
-  void updateByRadius();
-  void updateByFerence();
-  void updateByArea();
 };
 
 #endif  // INCLUDE_CIRCLE_H_

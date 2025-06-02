@@ -1,70 +1,73 @@
 // Copyright 2022 UNN-CS
 #include "circle.h"
-#include <cstdint>
 #include <cmath>
+#include <cstdint>
+#include <iostream>
+#include <stdexcept>
 
-const double PI = 3.141592653589793;
+namespace {
+double calcFerenceFromRadius(double r) { return 2.0 * M_PI * r; }
 
-void Circle::updateByRadius() {
-    ference = 2 * PI * radius;
-    area = PI * radius * radius;
+double calcAreaFromRadius(double r) { return M_PI * r * r; }
+
+double calcRadiusFromFerence(double f) { return f / (2.0 * M_PI); }
+
+double calcRadiusFromArea(double a) { return std::sqrt(a / M_PI); }
+} // namespace
+
+Circle::Circle(double radius) : radius(0.0), ference(0.0), area(0.0) {
+  try {
+    setRadius(radius);
+  } catch (const std::invalid_argument &e) {
+    std::cerr << "Constructor err: " << e.what() << std::endl;
+    throw;
+  }
 }
 
-void Circle::updateByFerence() {
-    radius = ference / (2 * PI);
-    area = PI * radius * radius;
-}
-
-void Circle::updateByArea() {
-    radius = sqrt(area / PI);
-    ference = 2 * PI * radius;
-}
-
-Circle::Circle(double r) {
-    setRadius(r);
-}
-
-void Circle::setRadius(double r) {
-    if (r > 0) {
-        radius = r;
-        updateByRadius();
-    } else {
-        radius = 0;
-        ference = 0;
-        area = 0;
+void Circle::setRadius(double radius) {
+  try {
+    if (radius < 0.0) {
+      throw std::invalid_argument("Radius can't be negative");
     }
+    this->radius = radius;
+    ference = calcFerenceFromRadius(this->radius);
+    area = calcAreaFromRadius(this->radius);
+  } catch (const std::invalid_argument &e) {
+    std::cerr << "setRadius err: " << e.what() << std::endl;
+    throw;
+  }
 }
 
-void Circle::setFerence(double f) {
-    if (f > 0) {
-        ference = f;
-        updateByFerence();
-    } else {
-        radius = 0;
-        ference = 0;
-        area = 0;
+void Circle::setFerence(double ference) {
+  try {
+    if (ference < 0.0) {
+      throw std::invalid_argument("Ference can't be negative");
     }
+    this->ference = ference;
+    radius = calcRadiusFromFerence(this->ference);
+    area = calcAreaFromRadius(radius);
+  } catch (const std::invalid_argument &e) {
+    std::cerr << "setFerence err: " << e.what() << std::endl;
+    throw;
+  }
 }
 
-void Circle::setArea(double a) {
-    if (a > 0) {
-        area = a;
-        updateByArea();
-    } else {
-        radius = 0;
-        ference = 0;
-        area = 0;
+void Circle::setArea(double area) {
+  try {
+    if (area < 0.0) {
+      throw std::invalid_argument("Area can't be negative");
     }
+    this->area = area;
+    radius = calcRadiusFromArea(this->area);
+    ference = calcFerenceFromRadius(radius);
+  } catch (const std::invalid_argument &e) {
+    std::cerr << "setArea err: " << e.what() << std::endl;
+    throw;
+  }
 }
 
-double Circle::getRadius() const {
-    return radius;
-}
+double Circle::getRadius() const { return radius; }
 
-double Circle::getFerence() const {
-    return ference;
-}
+double Circle::getFerence() const { return ference; }
 
-double Circle::getArea() const {
-    return area;
-}
+double Circle::getArea() const { return area; }

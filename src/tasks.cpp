@@ -1,37 +1,40 @@
 // Copyright 2022 UNN-CS
 #include "tasks.h"
-#include <algorithm>
 #include <cmath>
-#include <cstdint>
 #include "circle.h"
 
-const double PI = 3.141592653589793;
-
-double ropeGap(double earthRadius) {
-    if (earthRadius < 0) {
-        return 1 / (2 * PI);
-    }
-
-    Circle earth(std::max(earthRadius, 0.0));
-    double oldFerence = earth.getFerence();
-    double newFerence = oldFerence + 1;
-    earth.setFerence(newFerence);
-
-    return earth.getRadius() - earthRadius;
+double ropeGap() {
+  const double earthRadiusKm = 6378.1;
+  const double earthRadiusM = earthRadiusKm * 1000.0;
+  Circle earthCircle(earthRadiusM);
+  double oldFerence = earthCircle.getFerence();
+  earthCircle.setFerence(oldFerence + 1.0);
+  double newRadius = earthCircle.getRadius();
+  double gap = newRadius - earthRadiusM;
+  return gap;
 }
 
-double poolCost(double poolRadius, double pathWidth, double concreteCost,
-                double fenceCost) {
-    if (poolRadius < 0 || pathWidth < 0) {
-        return 0;
-    }
+double poolConcreteCost() {
+  const double poolRadius = 3.0;
+  const double walkwayWidth = 1.0;
+  double outerRadius = poolRadius + walkwayWidth;
+  Circle poolCircle(poolRadius);
+  Circle outerCircle(outerRadius);
+  double poolArea = poolCircle.getArea();
+  double outerArea = outerCircle.getArea();
+  double walkwayArea = outerArea - poolArea;
+  double costPerSquareMeter = 1000.0;
+  double totalConcreteCost = walkwayArea * costPerSquareMeter;
+  return totalConcreteCost;
+}
 
-    Circle pool(std::max(poolRadius, 0.0));
-    Circle outer(poolRadius + pathWidth);
-
-    double totalConcreteCost = (outer.getArea() - pool.getArea()) *
-                               concreteCost;
-    double totalFenceCost = outer.getFerence() * fenceCost;
-
-    return totalConcreteCost + totalFenceCost;
+double poolFenceCost() {
+  const double poolRadius = 3.0;
+  const double walkwayWidth = 1.0;
+  double outerRadius = poolRadius + walkwayWidth;
+  Circle fenceCircle(outerRadius);
+  double fenceFerence = fenceCircle.getFerence();
+  double costPerMeter = 2000.0;
+  double totalFenceCost = fenceFerence * costPerMeter;
+  return totalFenceCost;
 }
